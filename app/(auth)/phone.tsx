@@ -19,7 +19,7 @@ const PhoneScreen = () => {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1 bg-white`}>
-      <View style={tw`flex-1 justify-between items-center`}>
+      <View style={tw`flex-1 justify-between items-center px-2`}>
         
         {/* Title & Description */}
         <TitleDescription title="Enter Your Phone" description="We'll send an OTP to verify your number." />
