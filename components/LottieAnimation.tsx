@@ -5,9 +5,9 @@ import tw from 'twrnc';
 
 const LottieAnimation = ({ source }: { source: any }) => {
   return (
-    <View style={tw`flex-1 justify-end w-full`}>
+    <View style={tw`justify-end w-full`}>
       <LottieView
-        style={tw`w-[100%] h-4/5`}
+        style={tw`w-[100%] z-1 h-7/5 -mb-12`}
         source={source}
         autoPlay
         loop
