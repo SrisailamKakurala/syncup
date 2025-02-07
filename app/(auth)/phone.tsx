@@ -31,7 +31,7 @@ const PhoneScreen = () => {
         <SendOTPButton phone={phone} handleSendOTP={handleSendOTP} />
 
         {/* Lottie Animation */}
-        <LottieAnimation source={require('@/assets/animations/paper_rocket.json')} />
+        <LottieAnimation classnames='-mb-15' source={require('@/assets/animations/paper_rocket.json')} />
       </View>
     </KeyboardAvoidingView>
   );

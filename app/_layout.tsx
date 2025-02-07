@@ -1,36 +1,52 @@
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RootLayout = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkAuth = async () => {
       try {
-        const user = false; // Replace with Firebase logic
-        if (user) {
-          router.replace('/(tabs)');
-        } else {
-          router.replace('/(auth)/phone');
+        const user = await AsyncStorage.getItem('user'); // Ensure key matches `handleVerifyOTP`
+        const route = user ? '/(tabs)' : '/(auth)/phone';
+
+        if (isMounted) {
+          setInitialRoute(route);
+          setTimeout(() => { // Delay navigation slightly
+            router.replace(route);
+          }, 100); // Small delay to ensure rendering before navigation
         }
-      } finally {
-        setIsLoading(false);
+      } catch (error) {
+        console.error('Auth check failed:', error);
       }
     };
-    
-    checkAuth();
-  }, [router]);
 
-  // Show nothing while checking auth
-  if (isLoading) {
-    return null;
+    checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (!initialRoute) {
+    return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
   }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen 
+        name="(tabs)" 
+        options={{
+          gestureEnabled: false,
+          animation: 'fade',
+        }}
+      />
     </Stack>
   );
 };

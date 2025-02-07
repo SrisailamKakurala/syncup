@@ -1,12 +1,17 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import tw from 'twrnc';
 
-const createTrip = () => {
+const CreateTripScreen = () => {
   return (
-    <View>
-      <Text>createTrip</Text>
+    <View style={tw`flex-1 justify-center items-center bg-white`}>
+      <FontAwesome name="plane" size={50} color="black" />
+      <Text style={tw`text-2xl font-bold text-gray-900 mt-4`}>Plan a New Trip</Text>
+      <Text style={tw`text-gray-500 text-center mt-2 px-6`}>
+        Start organizing your next adventure by creating a trip.
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-export default createTrip
+export default CreateTripScreen;
