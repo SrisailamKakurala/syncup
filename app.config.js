@@ -5,6 +5,7 @@ export default {
     name: "syncup",
     slug: "syncup",
     version: "1.0.0",
+    owner: "ssl123",
     orientation: "portrait",
     icon: "./assets/images/logo.png",
     scheme: "myapp",
@@ -35,7 +36,7 @@ export default {
           resizeMode: "contain",
           backgroundColor: "#ffffff",
         },
-      ],
+      ]
     ],
     experiments: {
       typedRoutes: true,

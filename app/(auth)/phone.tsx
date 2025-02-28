@@ -1,38 +1,54 @@
-// PhoneScreen.tsx
-import { View, KeyboardAvoidingView, Platform } from 'react-native';
-import { useState } from 'react';
-import { router } from 'expo-router';
-import TitleDescription from '@/components/TitleDescription';
-import PhoneInput from '@/components/PhoneInput';
-import SendOTPButton from '@/components/SendOTPButton';
-import LottieAnimation from '@/components/LottieAnimation';
-import tw from 'twrnc';
+import { View, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
+import tw from "twrnc";
+import usePhoneAuth from "@/hooks/usePhoneAuth";
+import TitleDescription from "@/components/TitleDescription";
+import PhoneInput from "@/components/PhoneInput";
+import SendOTPButton from "@/components/SendOTPButton";
+import LottieAnimation from "@/components/LottieAnimation";
 
 const PhoneScreen = () => {
-  const [phone, setPhone] = useState('');
+  const { sendOTP, confirmation, loading, error } = usePhoneAuth();
+  const [phone, setPhone] = useState("");
 
-  const handleSendOTP = () => {
-    // Mock OTP request (Replace with Firebase auth logic)
-    console.log(`Sending OTP to ${phone}`);
-    router.push('/(auth)/otp'); // Navigate to OTP screen
+  const handleSendOTP = async () => {
+    const formattedPhone = `+91${phone.trim()}`;
+  
+    if (!/^\+91\d{10}$/.test(formattedPhone)) {  // ✅ Ensure correct phone number format
+      console.log("Invalid phone number. Please enter a 10-digit number.");
+      return;
+    }
+  
+    try {
+      console.log(`Sending OTP to ${formattedPhone}`);
+      const confirmationResult = await sendOTP(formattedPhone);
+  
+      if (confirmationResult) {
+        router.push({
+          pathname: "/(auth)/otp",
+          params: { verificationId: confirmationResult.verificationId },
+        });
+      } else {
+        console.error("Error: confirmationResult is null");
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
   };
+  
+  
+  
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1 bg-white`}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={tw`flex-1 bg-white`}>
       <View style={tw`flex-1 justify-between items-center px-2`}>
-        
-        {/* Title & Description */}
         <TitleDescription title="Enter Your Phone" description="We'll send an OTP to verify your number." />
-
-        {/* Phone Input */}
         <PhoneInput phone={phone} setPhone={setPhone} />
-
-        {/* Send OTP Button */}
-        <SendOTPButton phone={phone} handleSendOTP={handleSendOTP} />
-
-        {/* Lottie Animation */}
-        <LottieAnimation classnames='-mb-15' source={require('@/assets/animations/paper_rocket.json')} />
+        <SendOTPButton phone={phone} handleSendOTP={handleSendOTP} loading={loading} />
+        <LottieAnimation classnames="-mb-15 z-0" source={require("@/assets/animations/paper_rocket.json")} />
       </View>
+      {error && <Text style={tw`text-red-500 mt-2 text-center`}>{error}</Text>}
     </KeyboardAvoidingView>
   );
 };

@@ -1,54 +1,34 @@
-import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// app/_layout.tsx
+import { Slot, Stack, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 
-const RootLayout = () => {
-  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+// Wrap the root layout content in its own component so we can use hooks
+function RootLayoutContent() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    let isMounted = true;
-
-    const checkAuth = async () => {
-      try {
-        const user = await AsyncStorage.getItem('user'); // Ensure key matches `handleVerifyOTP`
-        const route = user ? '/(tabs)' : '/(auth)/phone';
-
-        if (isMounted) {
-          setInitialRoute(route);
-          setTimeout(() => { // Delay navigation slightly
-            router.replace(route);
-          }, 100); // Small delay to ensure rendering before navigation
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  if (!initialRoute) {
-    return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
-  }
+    console.log('RootLayout useEffect triggered, isAuth:', isAuthenticated);
+    if (!isAuthenticated) {
+      router.replace('/(auth)/phone');
+      console.log('Auth state changed to:', false);
+    } else {
+      router.replace('/(tabs)');
+      console.log('Auth state changed to:', true);
+    }
+  }, [isAuthenticated]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen 
-        name="(tabs)" 
-        options={{
-          gestureEnabled: false,
-          animation: 'fade',
-        }}
-      />
-    </Stack>
+    <Slot />
   );
-};
+}
 
-export default RootLayout;
+// Root layout component that provides the auth context
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutContent />
+    </AuthProvider>
+  );
+}

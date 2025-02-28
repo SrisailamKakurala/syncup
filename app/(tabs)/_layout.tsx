@@ -8,16 +8,16 @@ const TabsLayout = () => {
   const router = useRouter();
   const theme = useColorScheme(); // Auto-detect dark/light mode
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const user = false; // Replace with Firebase logic
-      if (!user) {
-        router.replace('/(auth)/phone');
-      }
-    };
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     const user = false; // Replace with Firebase logic
+  //     if (!user) {
+  //       router.replace('/(auth)/phone');
+  //     }
+  //   };
     
-    checkAuth();
-  }, []);
+  //   checkAuth();
+  // }, []);
 
   return (
     <Tabs
